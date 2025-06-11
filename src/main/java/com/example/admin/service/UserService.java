@@ -1,7 +1,9 @@
 package com.example.admin.service;
 
+import com.example.admin.model.dto.TokenDto;
 import com.example.admin.model.dto.UserAllDto;
 import com.example.admin.model.dto.UserDto;
+import com.example.admin.model.dto.UserLoginPasswordDto;
 import com.example.admin.model.entity.User;
 import com.example.admin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,32 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+
+    public boolean validToken(TokenDto tokenDto) {
+        String token = tokenDto.token();
+        return jwtService.isTokenValid(token);
+    }
+
+    public String autorization(UserLoginPasswordDto userLoginPasswordDto) {
+
+        String login = userLoginPasswordDto.login();
+        String password = userLoginPasswordDto.password();
+
+
+        User user = userRepository.findUserByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Невірний логін або пароль"));
+
+        UUID id = user.getId();
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Невірний логін або пароль");
+        }
+
+        return jwtService.generateToken(login, id);
+
+    }
 
     public void registration(UserAllDto userAllDto) {
 

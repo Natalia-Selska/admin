@@ -5,6 +5,7 @@ import com.example.admin.model.entity.Order;
 import com.example.admin.model.entity.Product;
 import com.example.admin.model.entity.User;
 import com.example.admin.repository.OrderRepository;
+import com.example.admin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,15 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final ProductService productService;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public Order addOrder(OrderDto order) {
-        User user = userService.getUserById(order.userId());
+    public Order addOrder(OrderDto order, String token) {
+        UUID idUser = jwtService.getId(token);
+        User user = userRepository.findUserById(idUser);
+        if (user == null) {
+            throw new RuntimeException("User not find");
+        }
         List<Product> products = productService.getProductsByIds(order.productIds());
         Order orderToSave = new Order();
         orderToSave.setUser(user);
@@ -29,8 +36,8 @@ public class OrderService {
         for (Product product : products) {
             finalSum = finalSum + product.getPrice();
         }
-
         orderToSave.setSumOrder(finalSum);
+
         return orderRepository.save(orderToSave);
 
     }

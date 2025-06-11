@@ -12,10 +12,9 @@ import java.io.Serializable;
 
 @Configuration
 public class SecurityConfiguration {
-    //xfcghj
-    //test
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

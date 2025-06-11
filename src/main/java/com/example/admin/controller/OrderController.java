@@ -16,12 +16,13 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Order addOrder(@RequestBody OrderDto order) {
-        return orderService.addOrder(order);
+    public Order addOrder(@RequestBody OrderDto order ,@RequestHeader ("token") String token) {
+        System.out.println(token);
+        return orderService.addOrder(order,token);
     }
 
     @GetMapping("/user/{id}")
-    public List<Order> fingByUserOrder(@PathVariable("id") UUID userId) {
+    public List<Order> findByUserOrder(@PathVariable("id") UUID userId) {
         return orderService.researchOrderByUser(userId);
     }
 }

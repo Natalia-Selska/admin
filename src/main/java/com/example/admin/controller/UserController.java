@@ -1,7 +1,9 @@
 package com.example.admin.controller;
 
+import com.example.admin.model.dto.TokenDto;
 import com.example.admin.model.dto.UserAllDto;
 import com.example.admin.model.dto.UserDto;
+import com.example.admin.model.dto.UserLoginPasswordDto;
 import com.example.admin.model.entity.User;
 import com.example.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,24 @@ public class UserController {
 
     @PostMapping("/registration")
     public void registration(@RequestBody UserAllDto userAllDto) {
-         userService.registration(userAllDto);
+        userService.registration(userAllDto);
     }
 
+    @GetMapping("/autorization")
+    public String autorization(@RequestBody UserLoginPasswordDto userLoginPasswordDto) {
+        return userService.autorization(userLoginPasswordDto);
+    }
+
+    @GetMapping("/validToken")
+    public boolean validToken(@RequestBody TokenDto tokenDto) {
+        return userService.validToken(tokenDto);
+    }
+
+    @GetMapping("/getToken")
+    public String getToken(@RequestHeader("token") String token) {
+        System.out.println(token);
+        return null;
+    }
 
     @GetMapping
     public List<User> getUsers() {
